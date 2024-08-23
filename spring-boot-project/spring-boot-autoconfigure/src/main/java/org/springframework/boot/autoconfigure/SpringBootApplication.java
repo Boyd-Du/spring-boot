@@ -42,6 +42,16 @@ import org.springframework.data.repository.Repository;
  * auto-configuration} and {@link ComponentScan component scanning}. This is a convenience
  * annotation that is equivalent to declaring {@code @SpringBootConfiguration},
  * {@code @EnableAutoConfiguration} and {@code @ComponentScan}.
+ * <br>
+ * <br>
+ * 2.2. 启动类的位置
+ * <br>
+ * 我们通常建议你将你启动类放在一个根package中，高于其他的类，{@link SpringBootApplication @SpringBootApplication}
+ * 注解一般都是注解在启动类上的。它默认会扫描当前类下的所有子包。例如，如果你正在编写一个JPA应用程序，
+ * 你的 @Entity 类只有定义在启动类的子包下才能被扫描加载到。这样的好处也显而易见，
+ * {@link SpringBootApplication @SpringBootApplication} 默认只会扫描加载你项目工程中的组件。
+ * <br>
+ * <a href="https://springdoc.cn/spring-boot/using.html#using.structuring-your-code">启动类详情链接</a>
  *
  * @author Phillip Webb
  * @author Stephane Nicoll
@@ -52,6 +62,7 @@ import org.springframework.data.repository.Repository;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
+// 通常，可以把启动类是作为主要的 @Configuration 类(可以在启动类里写配置代码)
 @SpringBootConfiguration
 @EnableAutoConfiguration
 @ComponentScan(excludeFilters = { @Filter(type = FilterType.CUSTOM, classes = TypeExcludeFilter.class),
@@ -59,8 +70,13 @@ import org.springframework.data.repository.Repository;
 public @interface SpringBootApplication {
 
 	/**
-	 * Exclude specific auto-configuration classes such that they will never be applied.
-	 * @return the classes to exclude
+	 * <a href="https://yiyan.baidu.com/share/ZmoXN8qRfe">spring @AliasFor详解</a>
+	 * <br>
+	 * <a href="https://yiyan.baidu.com/share/XQq1GfTomb">别名必须是已存在的另一个属性</a>
+	 * <br>
+	 * <a href="https://yiyan.baidu.com/share/ZWer0Enp03">设计多个属性在功能上等价的原因</a>
+	 * <br>
+	 * by Boyd.Du 2024-08-23 15:45
 	 */
 	@AliasFor(annotation = EnableAutoConfiguration.class)
 	Class<?>[] exclude() default {};
