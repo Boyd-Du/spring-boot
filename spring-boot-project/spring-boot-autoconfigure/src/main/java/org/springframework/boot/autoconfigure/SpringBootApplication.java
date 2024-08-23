@@ -62,7 +62,8 @@ import org.springframework.data.repository.Repository;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-// 通常，可以把启动类是作为主要的 @Configuration 类(可以在启动类里写配置代码)
+// 通常，可以把启动类视作为主要的 @Configuration 类(可以在启动类里写配置代码)
+// @SpringBootConfiguration和@Configuration区别:https://yiyan.baidu.com/share/AnAkUA3iKf(功能相似,但追求更明确的语义)
 @SpringBootConfiguration
 @EnableAutoConfiguration
 @ComponentScan(excludeFilters = { @Filter(type = FilterType.CUSTOM, classes = TypeExcludeFilter.class),

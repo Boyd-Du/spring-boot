@@ -272,12 +272,18 @@ public class SpringApplication {
 	public SpringApplication(ResourceLoader resourceLoader, Class<?>... primarySources) {
 		this.resourceLoader = resourceLoader;
 		Assert.notNull(primarySources, "PrimarySources must not be null");
+		// LinkedHashSet和HashSet区别:https://yiyan.baidu.com/share/o3KvUZacts
 		this.primarySources = new LinkedHashSet<>(Arrays.asList(primarySources));
+		// 基于类路径（classpath）中的特定库来推断并设置Spring Boot应用的Web应用类型:https://yiyan.baidu.com/share/kuGfzmWgMZ
 		this.properties.setWebApplicationType(WebApplicationType.deduceFromClasspath());
+		// 用于加载 META-INF/spring.factories 文件，并将其中配置的初始化器注册到 ApplicationContext
 		this.bootstrapRegistryInitializers = new ArrayList<>(
 				getSpringFactoriesInstances(BootstrapRegistryInitializer.class));
+		// 加载并注册应用上下文初始化器
 		setInitializers((Collection) getSpringFactoriesInstances(ApplicationContextInitializer.class));
+		// 加载并注册应用监听器
 		setListeners((Collection) getSpringFactoriesInstances(ApplicationListener.class));
+		// 推断主应用类
 		this.mainApplicationClass = deduceMainApplicationClass();
 	}
 
