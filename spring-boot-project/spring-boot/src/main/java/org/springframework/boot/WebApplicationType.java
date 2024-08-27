@@ -57,6 +57,10 @@ public enum WebApplicationType {
 
 	private static final String JERSEY_INDICATOR_CLASS = "org.glassfish.jersey.servlet.ServletContainer";
 
+	/**
+	 * <a href="https://yiyan.baidu.com/share/yNprpBXhGn">类型推断原理</a>
+	 * by Boyd.Du 2024-08-27 21:52
+	 */
 	static WebApplicationType deduceFromClasspath() {
 		if (ClassUtils.isPresent(WEBFLUX_INDICATOR_CLASS, null) && !ClassUtils.isPresent(WEBMVC_INDICATOR_CLASS, null)
 				&& !ClassUtils.isPresent(JERSEY_INDICATOR_CLASS, null)) {
@@ -67,6 +71,7 @@ public enum WebApplicationType {
 				return WebApplicationType.NONE;
 			}
 		}
+		// WebApplicationType.SERVLET 类型。可以这样的判断的原因是，引入 Spring MVC 时，是内嵌的 Web 应用，会引入 Servlet 类。
 		return WebApplicationType.SERVLET;
 	}
 
