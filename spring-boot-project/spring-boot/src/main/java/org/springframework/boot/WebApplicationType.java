@@ -58,13 +58,19 @@ public enum WebApplicationType {
 	private static final String JERSEY_INDICATOR_CLASS = "org.glassfish.jersey.servlet.ServletContainer";
 
 	/**
-	 * <a href="https://yiyan.baidu.com/share/yNprpBXhGn">类型推断原理</a>
+	 * <a href="https://yiyan.baidu.com/share/yNprpBXhGn">类型推断原理1</a>
+	 * <br>
+	 * <a href="https://i-blog.csdnimg.cn/direct/d6f83b58200947739b206b21ef0947ca.png">类型推断原理2</a>
+	 * <br>
 	 * by Boyd.Du 2024-08-27 21:52
 	 */
 	static WebApplicationType deduceFromClasspath() {
+		// TODO 防止项目引入一个第三方的用响应式框架作为辅助功能的传统web应用的情况,
+		// TODO 这个时候如果不加后面两个判断条件则会错误的将当前应用识别为响应式应用
 		if (ClassUtils.isPresent(WEBFLUX_INDICATOR_CLASS, null) && !ClassUtils.isPresent(WEBMVC_INDICATOR_CLASS, null)
 				&& !ClassUtils.isPresent(JERSEY_INDICATOR_CLASS, null)) {
 			return WebApplicationType.REACTIVE;
+
 		}
 		for (String className : SERVLET_INDICATOR_CLASSES) {
 			if (!ClassUtils.isPresent(className, null)) {
