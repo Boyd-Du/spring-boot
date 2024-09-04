@@ -20,7 +20,11 @@ package org.springframework.boot.loader.launch;
  * {@link Launcher} for JAR based archives. This launcher assumes that dependency jars are
  * included inside a {@code /BOOT-INF/lib} directory and that application classes are
  * included inside a {@code /BOOT-INF/classes} directory.
- *
+ * <br>
+ * <br>
+ * <a href="https://blog.csdn.net/l18848956739/article/details/106549020">Spring Boot Jar 启动原理</a>
+ * <br>
+ * by Boyd.Du 2024-09-04 19:12
  * @author Phillip Webb
  * @author Andy Wilkinson
  * @author Madhura Bhave

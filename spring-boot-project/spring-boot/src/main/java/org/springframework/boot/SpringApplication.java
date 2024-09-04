@@ -276,7 +276,8 @@ public class SpringApplication {
 		this.primarySources = new LinkedHashSet<>(Arrays.asList(primarySources));
 		// 基于类路径（classpath）中的特定库来推断并设置Spring Boot应用的Web应用类型:https://yiyan.baidu.com/share/kuGfzmWgMZ
 		this.properties.setWebApplicationType(WebApplicationType.deduceFromClasspath());
-		// 用于加载 META-INF/spring.factories 文件，并将其中配置的初始化器注册到 ApplicationContext
+		// 用于向 ApplicationContext 注册用户自定义的Bean初始化器
+		// BootstrapRegistryInitializer用于存储和共享对象的注册表，这些对象在 ApplicationContext 准备好之前就可能已经被创建并需要被共享。
 		this.bootstrapRegistryInitializers = new ArrayList<>(
 				getSpringFactoriesInstances(BootstrapRegistryInitializer.class));
 		// 加载并注册应用上下文初始化器
@@ -287,6 +288,9 @@ public class SpringApplication {
 		this.mainApplicationClass = deduceMainApplicationClass();
 	}
 
+	/**
+	 * <a href="https://yiyan.baidu.com/share/0Bkrs8SzT8?utm_invite_code=6HTzRhswzJHE%2FAHhN5mVdw%3D%3D&utm_name=YnJhdmVwcmVmYWI%3D&utm_fission_type=common">主类推断代码详解</a>
+	 */
 	private Class<?> deduceMainApplicationClass() {
 		return StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE)
 			.walk(this::findMainClass)
@@ -723,6 +727,7 @@ public class SpringApplication {
 	 * @return a ClassLoader (never null)
 	 */
 	public ClassLoader getClassLoader() {
+		// resourceLoader可以在应用用户自定义的启动类中通过new SpringApplication(...).setResourceLoader()方法设置,也可以直接通过构造方法(new SpringApplication(...))设置
 		if (this.resourceLoader != null) {
 			return this.resourceLoader.getClassLoader();
 		}
