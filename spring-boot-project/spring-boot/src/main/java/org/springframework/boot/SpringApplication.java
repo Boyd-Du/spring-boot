@@ -298,6 +298,8 @@ public class SpringApplication {
 	}
 
 	private Optional<Class<?>> findMainClass(Stream<StackFrame> stack) {
+		// TODO 如果是将项目打包为jar运行,那么.findFirst()获取的应该是
+		// TODO JarLauncher.mian(args)/BoydApplication.mian(args)中的第二个,是因为栈遍历是自上而下的原因么
 		return stack.filter((frame) -> Objects.equals(frame.getMethodName(), "main"))
 			.findFirst()
 			.map(StackWalker.StackFrame::getDeclaringClass);
@@ -310,6 +312,7 @@ public class SpringApplication {
 	 * @return a running {@link ApplicationContext}
 	 */
 	public ConfigurableApplicationContext run(String... args) {
+		// 应用启动时间管理
 		Startup startup = Startup.create();
 		if (this.properties.isRegisterShutdownHook()) {
 			SpringApplication.shutdownHook.enableShutdownHookAddition();
