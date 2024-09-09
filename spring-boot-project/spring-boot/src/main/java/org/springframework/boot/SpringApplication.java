@@ -276,7 +276,7 @@ public class SpringApplication {
 		this.primarySources = new LinkedHashSet<>(Arrays.asList(primarySources));
 		// 基于类路径（classpath）中的特定库来推断并设置Spring Boot应用的Web应用类型:https://yiyan.baidu.com/share/kuGfzmWgMZ
 		this.properties.setWebApplicationType(WebApplicationType.deduceFromClasspath());
-		// 用于向 ApplicationContext 注册用户自定义的Bean初始化器
+		// 用于向 ApplicationContext 注册并创建用户自定义的Bean初始化器实例
 		// BootstrapRegistryInitializer用于存储和共享对象的注册表，这些对象在 ApplicationContext 准备好之前就可能已经被创建并需要被共享。
 		this.bootstrapRegistryInitializers = new ArrayList<>(
 				getSpringFactoriesInstances(BootstrapRegistryInitializer.class));
@@ -314,17 +314,23 @@ public class SpringApplication {
 	public ConfigurableApplicationContext run(String... args) {
 		// 应用启动时间管理
 		Startup startup = Startup.create();
+		// 允许应用注册JVM关闭钩子
+		// 详情:https://yiyan.baidu.com/share/i5QkoicgGE?utm_invite_code=6HTzRhswzJHE%2FAHhN5mVdw%3D%3D&utm_name=YnJhdmVwcmVmYWI%3D&utm_fission_type=common
 		if (this.properties.isRegisterShutdownHook()) {
 			SpringApplication.shutdownHook.enableShutdownHookAddition();
 		}
+		// 创建用户自定义初始化器中的所有Bean实例对象(初始化器实例和初始化器中的Spring Bean实例是两回事,两种实例对象)
 		DefaultBootstrapContext bootstrapContext = createBootstrapContext();
 		ConfigurableApplicationContext context = null;
+		// 禁用JAVA图形操作，例如图形界面,绘制图形或创建窗口，以提高性能并减少资源消耗
 		configureHeadlessProperty();
+		// 加载注册应用程序 运行 时监听器
 		SpringApplicationRunListeners listeners = getRunListeners(args);
 		listeners.starting(bootstrapContext, this.mainApplicationClass);
 		try {
 			ApplicationArguments applicationArguments = new DefaultApplicationArguments(args);
 			ConfigurableEnvironment environment = prepareEnvironment(listeners, bootstrapContext, applicationArguments);
+			// 控制台打印Banner
 			Banner printedBanner = printBanner(environment);
 			context = createApplicationContext();
 			context.setApplicationStartup(this.applicationStartup);
@@ -336,6 +342,7 @@ public class SpringApplication {
 				new StartupInfoLogger(this.mainApplicationClass, environment).logStarted(getApplicationLog(), startup);
 			}
 			listeners.started(context, startup.timeTakenToStarted());
+			// 类似于Jfinal的onStart()方法,运行项目启动后需要立即执行的代码
 			callRunners(context, applicationArguments);
 		}
 		catch (Throwable ex) {
