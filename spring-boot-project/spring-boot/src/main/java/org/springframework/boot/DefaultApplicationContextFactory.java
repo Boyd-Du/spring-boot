@@ -41,6 +41,8 @@ class DefaultApplicationContextFactory implements ApplicationContextFactory {
 
 	@Override
 	public ConfigurableEnvironment createEnvironment(WebApplicationType webApplicationType) {
+		// Lambda表达式缩写:ApplicationContextFactory::createEnvironment
+		// Lambda表达式全写:(DefaultApplicationContextFactory, WebApplicationType) -> DefaultApplicationContextFactory.createEnvironment(WebApplicationType);
 		return getFromSpringFactories(webApplicationType, ApplicationContextFactory::createEnvironment, null);
 	}
 

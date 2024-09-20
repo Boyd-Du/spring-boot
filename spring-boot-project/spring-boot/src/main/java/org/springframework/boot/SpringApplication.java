@@ -326,6 +326,8 @@ public class SpringApplication {
 		configureHeadlessProperty();
 		// 加载注册应用程序 运行 时监听器
 		SpringApplicationRunListeners listeners = getRunListeners(args);
+		// 开始监听(事件监听器注册到事件发布器，用于监听事件)
+		// 事件监听原理:https://blog.csdn.net/weixin_42118323/article/details/140083167
 		listeners.starting(bootstrapContext, this.mainApplicationClass);
 		try {
 			ApplicationArguments applicationArguments = new DefaultApplicationArguments(args);
@@ -368,6 +370,7 @@ public class SpringApplication {
 	private ConfigurableEnvironment prepareEnvironment(SpringApplicationRunListeners listeners,
 			DefaultBootstrapContext bootstrapContext, ApplicationArguments applicationArguments) {
 		// Create and configure the environment
+		// Web项目默认获取的是ApplicationServletEnvironment
 		ConfigurableEnvironment environment = getOrCreateEnvironment();
 		configureEnvironment(environment, applicationArguments.getSourceArgs());
 		ConfigurationPropertySources.attach(environment);
@@ -496,6 +499,7 @@ public class SpringApplication {
 		}
 		ConfigurableEnvironment environment = this.applicationContextFactory
 			.createEnvironment(this.properties.getWebApplicationType());
+		// TODO 个人目前觉得这个判断意义不大
 		if (environment == null && this.applicationContextFactory != ApplicationContextFactory.DEFAULT) {
 			environment = ApplicationContextFactory.DEFAULT.createEnvironment(this.properties.getWebApplicationType());
 		}
@@ -514,10 +518,13 @@ public class SpringApplication {
 	 * @see #configurePropertySources(ConfigurableEnvironment, String[])
 	 */
 	protected void configureEnvironment(ConfigurableEnvironment environment, String[] args) {
+		// https://yiyan.baidu.com/share/sQecAvY3sE?utm_invite_code=6HTzRhswzJHE%2FAHhN5mVdw%3D%3D&utm_name=YnJhdmVwcmVmYWI%3D&utm_fission_type=common
 		if (this.addConversionService) {
 			environment.setConversionService(new ApplicationConversionService());
 		}
+		// 将命令行参数转化为属性资源配置加入到sources的开头
 		configurePropertySources(environment, args);
+		// 设置配置文件,该方法目前未实现,为框架扩展功能点
 		configureProfiles(environment, args);
 	}
 
@@ -536,6 +543,8 @@ public class SpringApplication {
 		if (this.addCommandLineProperties && args.length > 0) {
 			String name = CommandLinePropertySource.COMMAND_LINE_PROPERTY_SOURCE_NAME;
 			if (sources.contains(name)) {
+				// Properties类和PropertySource类区别如下:
+				// https://i-blog.csdnimg.cn/direct/f6def02edc704a6aa17e711260f7d377.png
 				PropertySource<?> source = sources.get(name);
 				CompositePropertySource composite = new CompositePropertySource(name);
 				composite
