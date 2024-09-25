@@ -115,6 +115,8 @@ class SpringApplicationRunListeners {
 	private void doWithListeners(String stepName, Consumer<SpringApplicationRunListener> listenerAction,
 			Consumer<StartupStep> stepAction) {
 		StartupStep step = this.applicationStartup.start(stepName);
+		// 完整写法:this.listeners.forEach((listener) -> listenerAction.accept(listener))
+		// 部分简写写法:this.listeners.forEach(listenerAction::accept)
 		this.listeners.forEach(listenerAction);
 		if (stepAction != null) {
 			stepAction.accept(step);

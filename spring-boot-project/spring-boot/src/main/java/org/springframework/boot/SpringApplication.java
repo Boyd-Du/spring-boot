@@ -373,17 +373,20 @@ public class SpringApplication {
 		// Web项目默认获取的是ApplicationServletEnvironment
 		ConfigurableEnvironment environment = getOrCreateEnvironment();
 		configureEnvironment(environment, applicationArguments.getSourceArgs());
+		// 获取/创建名字为"configurationProperties"的属性源,并将它添加到MutablePropertySources第一个位置
 		ConfigurationPropertySources.attach(environment);
 		listeners.environmentPrepared(bootstrapContext, environment);
 		ApplicationInfoPropertySource.moveToEnd(environment);
 		DefaultPropertiesPropertySource.moveToEnd(environment);
 		Assert.state(!environment.containsProperty("spring.main.environment-prefix"),
 				"Environment prefix cannot be set via properties.");
+		// 将environment中的spring.main开头的属性绑定到SpringApplication中的属性值上
 		bindToSpringApplication(environment);
 		if (!this.isCustomEnvironment) {
 			EnvironmentConverter environmentConverter = new EnvironmentConverter(getClassLoader());
 			environment = environmentConverter.convertEnvironmentIfNecessary(environment, deduceEnvironmentClass());
 		}
+		// TODO 又来一遍
 		ConfigurationPropertySources.attach(environment);
 		return environment;
 	}
@@ -405,10 +408,15 @@ public class SpringApplication {
 			ConfigurableEnvironment environment, SpringApplicationRunListeners listeners,
 			ApplicationArguments applicationArguments, Banner printedBanner) {
 		context.setEnvironment(environment);
+		// 自定义/扩展/修改应用程序上下文内容
 		postProcessApplicationContext(context);
+		// 应用启动时，如果有AOT（Ahead-of-Time）编译的初始化器，那么就添加这个初始化器到Spring应用的初始化器集合中
+		// AOT编译是一种提前编译好代码的方式，这样在运行时就可以直接加载编译后的类，从而加快应用的启动速度
 		addAotGeneratedInitializerIfNecessary(this.initializers);
+		// 执行所有框架初始化器的初始化方法,创建框架初始化器中的所有Bean实例对象(bootstrapContext中用户自定义初始化器除外,因为已经执行过了)
 		applyInitializers(context);
 		listeners.contextPrepared(context);
+		// bootstrapContext中用户自定义初始化器除外,因为已经在createBootstrapContext()方法中执行过了
 		bootstrapContext.close(context);
 		if (this.properties.isLogStartupInfo()) {
 			logStartupInfo(context.getParent() == null);
@@ -448,6 +456,7 @@ public class SpringApplication {
 			List<ApplicationContextInitializer<?>> aotInitializers = new ArrayList<>(
 					initializers.stream().filter(AotApplicationContextInitializer.class::isInstance).toList());
 			if (aotInitializers.isEmpty()) {
+				// TODO 好像需要用户自定义这个类,例:SpringApplicationTests类中的静态内部类 ExampleAotProcessedMainClass__ApplicationContextInitializer
 				String initializerClassName = this.mainApplicationClass.getName() + "__ApplicationContextInitializer";
 				if (!ClassUtils.isPresent(initializerClassName, getClassLoader())) {
 					throw new AotInitializerNotFoundException(this.mainApplicationClass, initializerClassName);
