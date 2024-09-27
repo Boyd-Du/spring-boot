@@ -430,18 +430,25 @@ public class SpringApplication {
 			beanFactory.registerSingleton("springBootBanner", printedBanner);
 		}
 		if (beanFactory instanceof AbstractAutowireCapableBeanFactory autowireCapableBeanFactory) {
+			// 开启\关闭循环依赖检测(Spring Boot中的Autowired注解依赖注入默认会自动处理循环引用的问题，防止无限递归创建bean导致内存溢出。)
 			autowireCapableBeanFactory.setAllowCircularReferences(this.properties.isAllowCircularReferences());
 			if (beanFactory instanceof DefaultListableBeanFactory listableBeanFactory) {
+				// 是否允许应用在运行时动态修改或替换已经注册的 Bean
 				listableBeanFactory.setAllowBeanDefinitionOverriding(this.properties.isAllowBeanDefinitionOverriding());
 			}
 		}
+		// 是否允许延迟初始化被标记的Bean组件
 		if (this.properties.isLazyInitialization()) {
 			context.addBeanFactoryPostProcessor(new LazyInitializationBeanFactoryPostProcessor());
 		}
+		// TODO 没懂
 		if (this.properties.isKeepAlive()) {
 			context.addApplicationListener(new KeepAlive());
 		}
+		// BeanFactoryPostProcessor 是 Spring 框架中的一个重要接口，用于在 Spring 容器加载 bean 定义的时候对 bean 的定义进行修改或者是增强
+		// BeanFactoryPostProcessor叫后置处理器原因: https://yiyan.baidu.com/share/7XOIGIsWGe?utm_invite_code=6HTzRhswzJHE%2FAHhN5mVdw%3D%3D&utm_name=YnJhdmVwcmVmYWI%3D&utm_fission_type=common
 		context.addBeanFactoryPostProcessor(new PropertySourceOrderingBeanFactoryPostProcessor(context));
+		// TODO https://yiyan.baidu.com/share/o49Bbk4PGZ?utm_invite_code=6HTzRhswzJHE%2FAHhN5mVdw%3D%3D&utm_name=YnJhdmVwcmVmYWI%3D&utm_fission_type=common
 		if (!AotDetector.useGeneratedArtifacts()) {
 			// Load the sources
 			Set<Object> sources = getAllSources();
@@ -685,6 +692,7 @@ public class SpringApplication {
 	 */
 	protected void logStartupProfileInfo(ConfigurableApplicationContext context) {
 		Log log = getApplicationLog();
+		// 根据设置的日志级别判断是否记录
 		if (log.isInfoEnabled()) {
 			List<String> activeProfiles = quoteProfiles(context.getEnvironment().getActiveProfiles());
 			if (ObjectUtils.isEmpty(activeProfiles)) {
@@ -1418,6 +1426,7 @@ public class SpringApplication {
 	 * @see SpringApplication#run(Class, String...)
 	 */
 	public static void main(String[] args) throws Exception {
+		// 也可以用SpringApplicationBuilder来链式构建应用,更方便
 		SpringApplication.run(new Class<?>[0], args);
 	}
 
