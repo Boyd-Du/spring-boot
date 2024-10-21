@@ -100,6 +100,9 @@ class SpringApplicationShutdownHook implements Runnable {
 		}
 	}
 
+	/**
+	 * 应用程序关闭后JVM执行该方法进行一系列清理操作
+	 */
 	@Override
 	public void run() {
 		Set<ConfigurableApplicationContext> contexts;

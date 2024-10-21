@@ -273,6 +273,8 @@ public class SpringApplication {
 		this.resourceLoader = resourceLoader;
 		Assert.notNull(primarySources, "PrimarySources must not be null");
 		// LinkedHashSet和HashSet区别:https://yiyan.baidu.com/share/o3KvUZacts
+		//  primarySources作用:https://yiyan.baidu.com/share/vxxLNB8xhp?utm_invite_code=6HTzRhswzJHE%2FAHhN5mVdw%3D%3D&utm_name=YnJhdmVwcmVmYWI%3D&utm_fission_type=common
+		// 指定应用程序的主源类(即配置类)
 		this.primarySources = new LinkedHashSet<>(Arrays.asList(primarySources));
 		// 基于类路径（classpath）中的特定库来推断并设置Spring Boot应用的Web应用类型:https://yiyan.baidu.com/share/kuGfzmWgMZ
 		this.properties.setWebApplicationType(WebApplicationType.deduceFromClasspath());
@@ -1427,6 +1429,8 @@ public class SpringApplication {
 	 */
 	public static void main(String[] args) throws Exception {
 		// 也可以用SpringApplicationBuilder来链式构建应用,更方便
+		// fatJar加载流程:https://blog.csdn.net/kangjnghang/article/details/107046925
+		// java -jar ...启动流程:https://yiyan.baidu.com/share/piPKpyhMjZ?utm_invite_code=6HTzRhswzJHE%2FAHhN5mVdw%3D%3D&utm_name=YnJhdmVwcmVmYWI%3D&utm_fission_type=common
 		SpringApplication.run(new Class<?>[0], args);
 	}
 
