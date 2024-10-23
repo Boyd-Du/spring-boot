@@ -452,9 +452,9 @@ public class SpringApplication {
 		context.addBeanFactoryPostProcessor(new PropertySourceOrderingBeanFactoryPostProcessor(context));
 		// TODO https://yiyan.baidu.com/share/o49Bbk4PGZ?utm_invite_code=6HTzRhswzJHE%2FAHhN5mVdw%3D%3D&utm_name=YnJhdmVwcmVmYWI%3D&utm_fission_type=common
 		if (!AotDetector.useGeneratedArtifacts()) {
-			// Load the sources
 			Set<Object> sources = getAllSources();
 			Assert.notEmpty(sources, "Sources must not be empty");
+			// 加载所有配置的主要源(配置源)
 			load(context, sources.toArray(new Object[0]));
 		}
 		listeners.contextLoaded(context);
@@ -746,6 +746,7 @@ public class SpringApplication {
 		if (this.environment != null) {
 			loader.setEnvironment(this.environment);
 		}
+		// 加载所有配置的主要源(配置源)
 		loader.load();
 	}
 

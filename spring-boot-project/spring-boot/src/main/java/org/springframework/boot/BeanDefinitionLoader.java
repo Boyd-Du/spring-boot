@@ -152,6 +152,8 @@ class BeanDefinitionLoader {
 	}
 
 	private void load(Class<?> source) {
+		// .isAssignableFrom()方法作用类似于instanceof关键字,它可以在运行时动态的判断一个类是否属于另一个类(子类->父类,超类,父接口)
+		// 在Spring Boot中，isGroovyPresent方法通常用于检测项目构建中是否包含Groovy库
 		if (isGroovyPresent() && GroovyBeanDefinitionSource.class.isAssignableFrom(source)) {
 			// Any GroovyLoaders added in beans{} DSL can contribute beans here
 			GroovyBeanDefinitionSource loader = BeanUtils.instantiateClass(source, GroovyBeanDefinitionSource.class);
