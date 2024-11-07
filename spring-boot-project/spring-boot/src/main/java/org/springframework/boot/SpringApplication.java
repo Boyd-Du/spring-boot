@@ -415,7 +415,7 @@ public class SpringApplication {
 		// 应用启动时，如果有AOT（Ahead-of-Time）编译的初始化器，那么就添加这个初始化器到Spring应用的初始化器集合中
 		// AOT编译是一种提前编译好代码的方式，这样在运行时就可以直接加载编译后的类，从而加快应用的启动速度
 		addAotGeneratedInitializerIfNecessary(this.initializers);
-		// 执行所有框架初始化器的初始化方法,创建框架初始化器中的所有Bean实例对象(bootstrapContext中用户自定义初始化器除外,因为已经执行过了)
+		// 执行所有框架初始化器(也是监听器)的初始化方法initialize(bootstrapContext中用户自定义初始化器除外,因为已经执行过了)
 		applyInitializers(context);
 		listeners.contextPrepared(context);
 		// bootstrapContext中用户自定义初始化器除外,因为已经在createBootstrapContext()方法中执行过了
