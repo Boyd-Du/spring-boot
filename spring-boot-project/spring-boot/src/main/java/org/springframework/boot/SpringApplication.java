@@ -278,8 +278,9 @@ public class SpringApplication {
 		this.primarySources = new LinkedHashSet<>(Arrays.asList(primarySources));
 		// 基于类路径（classpath）中的特定库来推断并设置Spring Boot应用的Web应用类型:https://yiyan.baidu.com/share/kuGfzmWgMZ
 		this.properties.setWebApplicationType(WebApplicationType.deduceFromClasspath());
-		// 用于向 ApplicationContext 注册并创建用户自定义的Bean初始化器实例
-		// BootstrapRegistryInitializer用于存储和共享对象的注册表，这些对象在 ApplicationContext 准备好之前就可能已经被创建并需要被共享。
+		// 可作为扩展点,用于向 ApplicationContext 注册并创建用户自定义的Bean初始化器实例,
+		// BootstrapRegistry在Spring Boot中的作用是作为一个简单的对象注册表，用于在启动和Environment后处理期间注册一些创建成本较高或需要在ApplicationContext可用之前共享的实例‌。
+		// https://yiyan.baidu.com/share/dZH7uhlB6u?utm_invite_code=6HTzRhswzJHE%2FAHhN5mVdw%3D%3D&utm_name=YnJhdmVwcmVmYWI%3D&utm_fission_type=common
 		this.bootstrapRegistryInitializers = new ArrayList<>(
 				getSpringFactoriesInstances(BootstrapRegistryInitializer.class));
 		// 加载并注册应用上下文初始化器
