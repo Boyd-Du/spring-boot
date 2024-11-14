@@ -278,7 +278,7 @@ public class SpringApplication {
 		this.primarySources = new LinkedHashSet<>(Arrays.asList(primarySources));
 		// 基于类路径（classpath）中的特定库来推断并设置Spring Boot应用的Web应用类型:https://yiyan.baidu.com/share/kuGfzmWgMZ
 		this.properties.setWebApplicationType(WebApplicationType.deduceFromClasspath());
-		// 可作为扩展点,用于向 ApplicationContext 注册并创建用户自定义的Bean初始化器实例,
+		// 可作为扩展点,用于向 BootstrapContext 注册自定义的Bean实例,
 		// BootstrapRegistry在Spring Boot中的作用是作为一个简单的对象注册表，用于在启动和Environment后处理期间注册一些创建成本较高或需要在ApplicationContext可用之前共享的实例‌。
 		// https://yiyan.baidu.com/share/dZH7uhlB6u?utm_invite_code=6HTzRhswzJHE%2FAHhN5mVdw%3D%3D&utm_name=YnJhdmVwcmVmYWI%3D&utm_fission_type=common
 		this.bootstrapRegistryInitializers = new ArrayList<>(
@@ -287,7 +287,7 @@ public class SpringApplication {
 		setInitializers((Collection) getSpringFactoriesInstances(ApplicationContextInitializer.class));
 		// 加载并注册应用监听器
 		setListeners((Collection) getSpringFactoriesInstances(ApplicationListener.class));
-		// 推断主应用类
+		// 获取主应用类,目的:减少配置
 		this.mainApplicationClass = deduceMainApplicationClass();
 	}
 
@@ -322,7 +322,7 @@ public class SpringApplication {
 		if (this.properties.isRegisterShutdownHook()) {
 			SpringApplication.shutdownHook.enableShutdownHookAddition();
 		}
-		// 创建用户自定义初始化器中的所有Bean实例对象(初始化器实例和初始化器中的Spring Bean实例是两回事,两种实例对象)
+		// 调用每个用户自定义对象注册表.initialize方法,初始化用户自定义的初对象注册表实例
 		DefaultBootstrapContext bootstrapContext = createBootstrapContext();
 		ConfigurableApplicationContext context = null;
 		// 禁用JAVA图形操作，例如图形界面,绘制图形或创建窗口，以提高性能并减少资源消耗
@@ -1813,6 +1813,7 @@ public class SpringApplication {
 		@Override
 		protected Long processUptime() {
 			try {
+				// ManagementFactory.getRuntimeMXBean()方法的主要作用是获取当前Java虚拟机的运行时信息‌。
 				return ManagementFactory.getRuntimeMXBean().getUptime();
 			}
 			catch (Throwable ex) {
