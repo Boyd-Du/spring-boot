@@ -492,6 +492,7 @@ public class SpringApplication {
 
 	private SpringApplicationRunListeners getRunListeners(String[] args) {
 		ArgumentResolver argumentResolver = ArgumentResolver.of(SpringApplication.class, this);
+		// 链式调用
 		argumentResolver = argumentResolver.and(String[].class, args);
 		List<SpringApplicationRunListener> listeners = getSpringFactoriesInstances(SpringApplicationRunListener.class,
 				argumentResolver);
@@ -1430,6 +1431,7 @@ public class SpringApplication {
 	 * @see SpringApplication#run(Class, String...)
 	 */
 	public static void main(String[] args) throws Exception {
+		// args参数是通过命令行传入的选项/非选项参数,会存入PropertySource中,示例:java -jar myapp.jar --server.port=8080 arg1 arg2,其中"--server.port"为选项参数,"arg1 arg2"为非选项参数,详情如下:https://blog.csdn.net/qq_35512802/article/details/143686967
 		// 也可以用SpringApplicationBuilder来链式构建应用,更方便
 		// fatJar加载流程:https://blog.csdn.net/kangjnghang/article/details/107046925
 		// java -jar ...启动流程:https://yiyan.baidu.com/share/piPKpyhMjZ?utm_invite_code=6HTzRhswzJHE%2FAHhN5mVdw%3D%3D&utm_name=YnJhdmVwcmVmYWI%3D&utm_fission_type=common
