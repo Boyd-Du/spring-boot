@@ -132,7 +132,9 @@ class EventPublishingRunListener implements SpringApplicationRunListener, Ordere
 	}
 
 	private void multicastInitialEvent(ApplicationEvent event) {
+		// 注册监听器
 		refreshApplicationListeners();
+		// 发布事件
 		this.initialMulticaster.multicastEvent(event);
 	}
 
