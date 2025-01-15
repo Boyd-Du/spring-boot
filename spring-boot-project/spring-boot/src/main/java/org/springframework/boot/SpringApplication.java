@@ -287,7 +287,7 @@ public class SpringApplication {
 		setInitializers((Collection) getSpringFactoriesInstances(ApplicationContextInitializer.class));
 		// 加载并注册应用监听器
 		setListeners((Collection) getSpringFactoriesInstances(ApplicationListener.class));
-		// 获取主应用类,目的:减少配置
+		// 获取主应用类,目的:减少配置,用途:1 日志打印时携带主启动类信息,2 以主类所在的包(默认主类在根包目录下)为根包进行后续组件扫描操作
 		this.mainApplicationClass = deduceMainApplicationClass();
 	}
 
@@ -337,6 +337,7 @@ public class SpringApplication {
 			ConfigurableEnvironment environment = prepareEnvironment(listeners, bootstrapContext, applicationArguments);
 			// 控制台打印Banner
 			Banner printedBanner = printBanner(environment);
+			// 创建一个上下文
 			context = createApplicationContext();
 			context.setApplicationStartup(this.applicationStartup);
 			prepareContext(bootstrapContext, context, environment, listeners, applicationArguments, printedBanner);
