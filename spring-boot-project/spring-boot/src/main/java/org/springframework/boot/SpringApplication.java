@@ -285,7 +285,7 @@ public class SpringApplication {
 				getSpringFactoriesInstances(BootstrapRegistryInitializer.class));
 		// 加载并注册应用上下文初始化器
 		setInitializers((Collection) getSpringFactoriesInstances(ApplicationContextInitializer.class));
-		// 加载并注册应用监听器
+		// 加载并注册应用监听器(原始Spring框架核心监听器接口,作用范围:容器的整个生命周期)
 		setListeners((Collection) getSpringFactoriesInstances(ApplicationListener.class));
 		// 获取主应用类,目的:减少配置,用途:1 日志打印时携带主启动类信息,2 以主类所在的包(默认主类在根包目录下)为根包进行后续组件扫描操作
 		this.mainApplicationClass = deduceMainApplicationClass();
@@ -325,11 +325,15 @@ public class SpringApplication {
 		// 调用每个用户自定义对象注册表.initialize方法,初始化用户自定义的初对象注册表实例
 		DefaultBootstrapContext bootstrapContext = createBootstrapContext();
 		ConfigurableApplicationContext context = null;
-		// 禁用JAVA图形操作，例如图形界面,绘制图形或创建窗口，以提高性能并减少资源消耗
+		// 这段代码的作用：动态设置Java无头模式，优先保留用户通过JVM参数指定的值，若未指定则使用Spring Boot配置的默认值。
+		// 必要性：避免在无图形环境（如Linux服务器）中因缺少显示设备导致的运行时异常。
+		// 典型应用：处理图像生成、PDF导出、字体加载等需要AWT支持的场景。
+		// 详情:https://blog.csdn.net/JavaObjects/article/details/145634042?sharetype=blogdetail&sharerId=145634042&sharerefer=PC&sharesource=JavaObjects&spm=1011.2480.3001.8118
 		configureHeadlessProperty();
-		// 加载注册应用程序 运行 时监听器
+		// 加载应用程序 运行 时监听器(springboot框架专属监听器接口,作用范围:应用启动过程),
+		// SpringApplicationRunListener不会向多播器中注册,它的方法是手动调用的
 		SpringApplicationRunListeners listeners = getRunListeners(args);
-		// 开始监听(事件监听器注册到事件发布器，用于监听事件)
+		// 用SpringApplicationRunListener控制ApplicationListener事件的发布
 		// 事件监听原理:https://blog.csdn.net/weixin_42118323/article/details/140083167
 		listeners.starting(bootstrapContext, this.mainApplicationClass);
 		try {
@@ -341,6 +345,8 @@ public class SpringApplication {
 			context = createApplicationContext();
 			context.setApplicationStartup(this.applicationStartup);
 			prepareContext(bootstrapContext, context, environment, listeners, applicationArguments, printedBanner);
+			// Springboot源码refreshContext(context)为什么被叫做刷新上下文,这个方法和prepareContext有啥区别
+			// 详情:https://blog.csdn.net/JavaObjects/article/details/145636590?sharetype=blogdetail&sharerId=145636590&sharerefer=PC&sharesource=JavaObjects&spm=1011.2480.3001.8118
 			refreshContext(context);
 			afterRefresh(context, applicationArguments);
 			startup.started();
